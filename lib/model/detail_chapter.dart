@@ -1,72 +1,54 @@
 class ComicChapter {
-  final List<String> images;
-  final ChapterDetails? nextChap;
-  final ChapterDetails? prevChap;
-  final String name;
   final String id;
-
+  final String name;
+  final String content;
   final String viporfree;
 
+  final ChapterDetails? nextChap;
+  final ChapterDetails? prevChap;
+
   ComicChapter({
-    required this.images,
-    this.nextChap,
-    this.prevChap,
     required this.id,
     required this.name,
-    required this.viporfree
+    required this.content,
+    required this.viporfree,
+    this.nextChap,
+    this.prevChap,
   });
 
   factory ComicChapter.fromJson(Map<String, dynamic> json) {
-    List<String> images = [];
-    if (json['images'] != null) {
-      images = List<String>.from(json['images']);
-    }
-
-    ChapterDetails? nextChap;
-    if (json['nextchap'] != null) {
-      nextChap = ChapterDetails.fromJson(json['nextchap']);
-    }
-
-    ChapterDetails? prevChap;
-    if (json['prevchap'] != null) {
-      prevChap = ChapterDetails.fromJson(json['prevchap']);
-    }
-
     return ComicChapter(
-      id: json['_id'],
-      images: images,
-      nextChap: nextChap,
-      prevChap: prevChap,
-      name: json['chapname'],
-      viporfree: json['viporfree']
+      id: json['_id'] ?? '',
+      name: json['chapname'] ?? '',
+      content: json['content'] ?? '',
+      viporfree: json['viporfree'] ?? 'free',
+      nextChap: json['nextchap'] != null
+          ? ChapterDetails.fromJson(json['nextchap'])
+          : null,
+      prevChap: json['prevchap'] != null
+          ? ChapterDetails.fromJson(json['prevchap'])
+          : null,
     );
   }
 }
 
+
 class ChapterDetails {
   final String id;
   final String name;
-  final List<String> images;
   final String vipOrFree;
 
   ChapterDetails({
     required this.id,
-    required this.images,
+    required this.name,
     required this.vipOrFree,
-    required this.name
   });
 
   factory ChapterDetails.fromJson(Map<String, dynamic> json) {
-    List<String> images = [];
-    if (json['images'] != null) {
-      images = List<String>.from(json['images']);
-    }
-
     return ChapterDetails(
-      id: json['_id'],
-      name: json['chapname'],
-      images: images,
-      vipOrFree: json['viporfree'],
+      id: json['_id'] ?? '',
+      name: json['chapname'] ?? '',
+      vipOrFree: json['viporfree'] ?? 'free',
     );
   }
 }

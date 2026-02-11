@@ -214,7 +214,7 @@ class _SuaThongTinState extends State<SuaThongTin> {
       'avatar': await MultipartFile.fromFile(path, filename: filename),
     });
     Dio dio = Dio();
-    String urlTrangChu = 'http://10.0.2.2:8080/doiavatar/$userId';
+    String urlTrangChu = 'https://be-vantruyen.vercel.app/doiavatar/$userId';
 
     Map<String, String> header = {};
     dio.options.headers = header;

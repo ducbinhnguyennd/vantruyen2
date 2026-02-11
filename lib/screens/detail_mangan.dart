@@ -836,8 +836,8 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
 
   void toggleLike() async {
     final apiUrl = nutlike
-        ? 'http://10.0.2.2:8080/user/removeFavoriteManga/${currentUser!.user[0].id}/${widget.mangaId}'
-        : 'http://10.0.2.2:8080/user/addFavoriteManga/${currentUser!.user[0].id}/${widget.mangaId}';
+        ? 'https://be-vantruyen.vercel.app/user/removeFavoriteManga/${currentUser!.user[0].id}/${widget.mangaId}'
+        : 'https://be-vantruyen.vercel.app/user/addFavoriteManga/${currentUser!.user[0].id}/${widget.mangaId}';
 
     try {
       final response = await dio.post(apiUrl);

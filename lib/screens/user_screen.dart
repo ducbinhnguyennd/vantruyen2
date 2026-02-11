@@ -101,7 +101,7 @@ class _BXHScreenState extends State<BXHScreen>
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: BoxDecoration( 
                 image: DecorationImage(
                   image: AssetImage(AssetsPathConst.nen),
                   fit: BoxFit.cover,
@@ -314,7 +314,7 @@ class _BXHScreenState extends State<BXHScreen>
                       : 90
                   : Platform.isIOS
                       ? 80
-                      : 50,
+                      : 60,
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Column(

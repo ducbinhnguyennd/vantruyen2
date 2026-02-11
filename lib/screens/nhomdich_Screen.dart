@@ -62,8 +62,8 @@ class _DataScreenState extends State<NhomDichScreen> {
 
   void toggleLike() async {
     final apiUrl = nutlike
-        ? 'http://10.0.2.2:8080/unfollow/${widget.nhomdichID}/${widget.userID}'
-        : 'http://10.0.2.2:8080/follow/${widget.nhomdichID}/${widget.userID}';
+        ? 'https://be-vantruyen.vercel.app/unfollow/${widget.nhomdichID}/${widget.userID}'
+        : 'https://be-vantruyen.vercel.app/${widget.nhomdichID}/${widget.userID}';
 
     try {
       final response = await dio.post(apiUrl);

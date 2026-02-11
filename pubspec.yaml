@@ -53,6 +53,7 @@ dependencies:
   custom_refresh_indicator: ^3.0.0
   screen_protector: ^1.4.1
   cupertino_icons: ^1.0.8
+  flutter_tts: ^4.2.5
 
 dev_dependencies:
   flutter_test:

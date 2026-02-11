@@ -89,87 +89,103 @@ class _HomePageState extends State<HomePage>
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
+@override
+void initState() {
+  super.initState();
+  _loadData();
+}
 
+Future<void> _loadData() async {
+  setState(() => _isLoading = true);
+
+  await Future.delayed(Duration(seconds: 2));
+
+  setState(() => _isLoading = false);
+}
   @override
   Widget build(BuildContext context) {
     super.build(context);
     print('abc');
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFD1D3), Colors.white],
-            stops: [0.0, 0.4],
+    return RefreshIndicator(
+      color: ColorConst.colorPrimary120,
+      onRefresh: _loadData,
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFFFD1D3), Colors.white],
+              stops: [0.0, 0.4],
+            ),
           ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.all(0),
-          children: [
-            Search(),
-            SizedBox(
-              height: 200,
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: itemList.length,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: CachedNetworkImage(
-                          // Thay đổi từ Image.network thành CachedNetworkImage
-                          imageUrl: itemList[index].image,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                color: ColorConst.colorPrimary80),
-                            child: Center(
-                                child: CircularProgressIndicator(
-                              color: ColorConst.colorPrimary50,
-                            )),
-                          ), // Placeholder khi đang load
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error), // Widget hiển thị khi có lỗi
+          child: ListView(
+            padding: EdgeInsets.all(0),
+            children: [
+              Search(),
+              SizedBox(
+                height: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: itemList.length,
+                    onPageChanged: (int page) {
+                      setState(() {
+                        _currentPage = page;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
                         ),
-                      ),
-                    );
-                  },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: CachedNetworkImage(
+                            // Thay đổi từ Image.network thành CachedNetworkImage
+                            imageUrl: itemList[index].image,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  color: ColorConst.colorPrimary80),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: ColorConst.colorPrimary50,
+                              )),
+                            ), // Placeholder khi đang load
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error), // Widget hiển thị khi có lỗi
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(itemList.length, (index) {
-                return Container(
-                  width: 10,
-                  height: 10,
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: ColorConst.colorPrimary80, width: 0.5),
-                    shape: BoxShape.circle,
-                    color: _currentPage == index
-                        ? ColorConst.colorPrimary30
-                        : Colors.transparent,
-                  ),
-                );
-              }),
-            ),
-            ItemTrangChu()
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(itemList.length, (index) {
+                  return Container(
+                    width: 10,
+                    height: 10,
+                    margin: EdgeInsets.symmetric(horizontal: 5),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: ColorConst.colorPrimary80, width: 0.5),
+                      shape: BoxShape.circle,
+                      color: _currentPage == index
+                          ? ColorConst.colorPrimary30
+                          : Colors.transparent,
+                    ),
+                  );
+                }),
+              ),
+              ItemTrangChu()
+            ],
+          ),
         ),
       ),
     );
