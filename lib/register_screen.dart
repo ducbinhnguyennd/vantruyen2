@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       try {
         var response = await dio.post(
-          'https://be-vantruyen.vercel.app/register',
+          'http://localhost:8080/register',
           options: Options(
             followRedirects: true,
             maxRedirects: 5,

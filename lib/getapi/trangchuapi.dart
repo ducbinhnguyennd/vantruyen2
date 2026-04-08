@@ -16,9 +16,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../model/nhomdich_model.dart';
 
 Dio dio = Dio();
-String urlapi = 'https://be-vantruyen.vercel.app';
-
 // String urlapi = 'https://be-vantruyen.vercel.app';
+
+String urlapi = 'http://localhost:8080';
 
 class MangaService {
   static String apiUrl = "$urlapi/mangas";
