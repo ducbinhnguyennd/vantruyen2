@@ -83,7 +83,7 @@ class _ItemTrangChuState extends State<ItemTrangChu> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Thể loại ${category}',
+                              Text('${category}',
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold)),

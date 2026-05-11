@@ -63,7 +63,7 @@ class _DataScreenState extends State<NhomDichScreen> {
   void toggleLike() async {
     final apiUrl = nutlike
         ? 'https://be-vantruyen.vercel.app/unfollow/${widget.nhomdichID}/${widget.userID}'
-        : 'https://be-vantruyen.vercel.app/${widget.nhomdichID}/${widget.userID}';
+        : 'https://be-vantruyen.vercel.app/follow/${widget.nhomdichID}/${widget.userID}';
 
     try {
       final response = await dio.post(apiUrl);
@@ -79,7 +79,8 @@ class _DataScreenState extends State<NhomDichScreen> {
             context);
       }
     } catch (e) {
-      // Xử lý lỗi nếu có
+      print(' Lỗi khi gửi yêu cầu: $e');
+      CommonService.showToast('Đã xảy ra lỗi. Vui lòng thử lại.', context);
     }
   }
 

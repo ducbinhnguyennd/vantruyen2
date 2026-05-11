@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loginapp/model/CoinHistory_model.dart';
 import 'package:loginapp/model/bangtin_model.dart';
 import 'package:loginapp/model/category_model.dart';
 import 'package:loginapp/model/detail_chapter.dart';
@@ -65,8 +66,9 @@ class ChapterDetail {
 
       if (response.statusCode == 200) {
         ComicChapter myModel = ComicChapter.fromJson(response.data);
+        print('binh chapter ${myModel.content}');
         return myModel;
-      } else {
+      } else {    
         throw Exception('Failed to load chapter images');
       }
     } catch (e) {
@@ -190,7 +192,15 @@ class PaymentApi {
     }
   }
 }
-
+Future<List<CoinHistory>> getCoinHistory(String userId) async {
+  final response = await dio.get('$urlapi/lichsucoin/$userId');
+  if (response.statusCode == 200) {
+    final List<dynamic> data = response.data;
+    return data.map((item) => CoinHistory.fromJson(item)).toList();
+  } else {
+    throw Exception('Failed to fetch coin history');
+  }
+}
 // lay info user
 class ApiUser {
   Future<UserModel> fetchUserData(String userId) async {
