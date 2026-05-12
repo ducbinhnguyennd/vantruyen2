@@ -17,6 +17,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         title: Text('Màn hình thể loại'),
       ),
       body: FutureBuilder<List<CategoryModel>>(

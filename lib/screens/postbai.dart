@@ -39,10 +39,11 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
         title: Text('Viết bài mới'),
         backgroundColor: ColorConst.colorPrimary50,
         leading: InkWell(
-            onTap: (() {
-              Navigator.of(context).pop(dataToPass);
-            }),
-            child: Icon(Icons.arrow_back_ios)),
+          onTap: (() {
+            Navigator.of(context).pop(dataToPass);
+          }),
+          child: Icon(Icons.arrow_back_ios),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -64,42 +65,51 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
                   flex: 1,
                   child: MaterialButton(
                     onPressed: () {
-                      _onImageButtonPressed(ImageSource.gallery,
-                          context: context);
+                      _onImageButtonPressed(
+                        ImageSource.gallery,
+                        context: context,
+                      );
                     },
                     height: DoubleX.kLayoutHeightTiny_1XX,
                     color: ColorConst.colorPrimary,
                     child: const Text(
                       "Chọn ảnh...",
                       style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: ColorConst.colorPrimaryText),
+                        fontStyle: FontStyle.italic,
+                        color: ColorConst.colorPrimaryText,
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(bottom: DoubleX.kPaddingSizeMedium_1XX),
-              child: _imageFile != null
-                  ? Center(
-                      child: SizedBox(
-                        width: DoubleX.kLayoutWidthHuge,
-                        height: DoubleX.kLayoutHeightHuge,
-                        child: Image.file(File(_imageFile!.path),
+              padding: const EdgeInsets.only(
+                bottom: DoubleX.kPaddingSizeMedium_1XX,
+              ),
+              child:
+                  _imageFile != null
+                      ? Center(
+                        child: SizedBox(
+                          width: DoubleX.kLayoutWidthHuge,
+                          height: DoubleX.kLayoutHeightHuge,
+                          child: Image.file(
+                            File(_imageFile!.path),
                             width: DoubleX.kSizeHuge,
-                            height: DoubleX.kSizeHuge),
-                      ),
-                    )
-                  : const Text("Bấm nút chọn ảnh ở trên để chọn ảnh!"),
+                            height: DoubleX.kSizeHuge,
+                          ),
+                        ),
+                      )
+                      : const Text("Bấm nút chọn ảnh ở trên để chọn ảnh!"),
             ),
             InkWell(
               onTap: (() async {
                 try {
                   if (contentController.text.isEmpty) {
                     CommonService.showToast(
-                        'Vui lòng nhập nội dung bài viết', context);
+                      'Vui lòng nhập nội dung bài viết',
+                      context,
+                    );
                     return;
                   }
 
@@ -108,43 +118,37 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
                     final tempDir = await getTemporaryDirectory();
                     final path = tempDir.path;
                     int rand = math.Random().nextInt(10000);
-                    final image = image_format
-                        .decodeImage(File(_imageFile!.path).readAsBytesSync());
-                    final thumbnail =
-                        image_format.copyResize(image!, width: 700);
-
+                    final image = image_format.decodeImage(
+                      File(_imageFile!.path).readAsBytesSync(),
+                    );
+                    final thumbnail = image_format.copyResize(
+                      image!,
+                      width: 700,
+                    );
                     File image2 = File('$path/img_$rand.jpg');
-
                     await image2.writeAsBytes(
-                        image_format.encodeJpg(thumbnail, quality: 72));
-
+                      image_format.encodeJpg(thumbnail, quality: 72),
+                    );
                     imagePath = image2.path;
                   }
 
-                  uploadImageAvatar(widget.userId, contentController.text,
-                          imagePath, context)
-                      .then((data) {
-                    if (data != null) {
-                      print(" uploadImageAvatar : $data");
-                    } else
-                      (e) {
-                        Fluttertoast.showToast(
-                            msg: '${e}',
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.TOP,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.black,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
-                      };
-                  });
+                  // ✅ Sửa 1: await upload xong mới pop
+                  final data = await uploadImageAvatar(
+                    widget.userId,
+                    contentController.text,
+                    imagePath,
+                    context,
+                  );
+
+                  if (data != null) {
+                    print("uploadImageAvatar : $data");
+                  }
 
                   CommonService.showToast('Đăng bài viết thành công', context);
                   await Future.delayed(Duration(seconds: 1));
-                  setState(() {
-                    isAvatarChanged = true;
-                  });
-                  Navigator.pop(context, InventoryData(isAvatarChanged, true));
+
+                  // ✅ Sửa 2: truyền true vào đúng field boolValue
+                  Navigator.pop(context, InventoryData(true, true));
                 } catch (e) {
                   print('lỗi gì đây $e');
                 }
@@ -153,15 +157,17 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
                 height: 45,
                 width: MediaQuery.of(context).size.width / 2,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: ColorConst.colorPrimary50),
+                  borderRadius: BorderRadius.circular(25),
+                  color: ColorConst.colorPrimary50,
+                ),
                 child: Center(
-                    child: Text(
-                  'Đăng bài',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                )),
+                  child: Text(
+                    'Đăng bài',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -177,19 +183,23 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
   }
 
   static Future<dynamic> uploadImageAvatar(
-      String userId, String content, String? path, BuildContext context) async {
+    String userId,
+    String content,
+    String? path,
+    BuildContext context,
+  ) async {
     var body = FormData();
     if (path != null && path != '') {
       List<String> st = path.split("/");
       String filename = st[st.length - 1];
-      body.files.add(MapEntry(
-        'images',
-        await MultipartFile.fromFile(path, filename: filename),
-      ));
+      body.files.add(
+        MapEntry(
+          'images',
+          await MultipartFile.fromFile(path, filename: filename),
+        ),
+      );
     }
-    body.fields.addAll([
-      MapEntry('content', content),
-    ]);
+    body.fields.addAll([MapEntry('content', content)]);
     Dio dio = Dio();
     String urlTrangChu = 'https://be-vantruyen.vercel.app/postbaiviet/$userId';
 

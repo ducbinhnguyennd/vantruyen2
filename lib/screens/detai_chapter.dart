@@ -845,9 +845,11 @@ class _DetailChapterState extends State<DetailChapter> {
               color: ColorConst.colorBackgroundStory,
               child: SingleChildScrollView(
                 controller: _scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                padding: const EdgeInsets.only(
+                  top: 96,
+                  bottom: 100,
+                  left: 16,
+                  right: 16,
                 ),
                 child: Text(
                   chapterDetail?.content ?? '',

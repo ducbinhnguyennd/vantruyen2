@@ -45,37 +45,29 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
   Data? currentUser;
   bool _isLoading = true;
   String viporfree = "free";
-  _loadUser() {
+Future<void> _loadUser() async {
     UserServices us = UserServices();
-    us.getInfoLogin().then((value) {
-      if (value != "") {
+    String value = await us.getInfoLogin();
+    
+    if (value != "") {
         setState(() {
-          currentUser = Data.fromJson(jsonDecode(value));
+            currentUser = Data.fromJson(jsonDecode(value));
         });
-      } else {
+    } else {
         setState(() {
-          currentUser = null;
+            currentUser = null;
         });
-      }
-    }, onError: (error) {
-      if (kDebugMode) {
-        print(
-            '_alexTR_logging_ : SettingPage: _loadUser: error: ${error.toString()}');
-      }
-    }).then((value) {
-      MangaDetail.fetchMangaDetail(
-              widget.mangaId, currentUser?.user[0].id ?? '')
-          .then((value) {
-        print('value day $value');
-        setState(() {
-          mangaDetail = value;
-          nutlike = mangaDetail?.isLiked ?? false;
-        });
-      });
-      print('in data ra day $mangaDetail');
-    });
-  }
+    }
 
+    // Bây giờ mới fetch detail, sau khi đã có currentUser
+    final detail = await MangaDetail.fetchMangaDetail(
+        widget.mangaId, currentUser?.user[0].id ?? '');
+    
+    setState(() {
+        mangaDetail = detail;
+        nutlike = mangaDetail?.isLiked ?? false;
+    });
+}
   Future<void> _refresh() async {
     await _loadUser();
   }
@@ -291,7 +283,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
                 ),
               );
             },
-            child: Text('Đăng nhập đi các cu em'),
+            child: Text('Đăng nhập để xem chi tiết truyện', style: TextStyle(fontSize: 16)  ),
           ),
         ),
       );
@@ -299,6 +291,12 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
       return Scaffold(
         appBar: AppBar(
           backgroundColor: ColorConst.colorPrimary50,
+          iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
           title: Text('Đang tải...'),
         ),
         body: const Center(
@@ -311,10 +309,18 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
       return Scaffold(
         appBar: AppBar(
           backgroundColor: ColorConst.colorPrimary50,
+          iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
           title: Text(widget.storyName),
+
           bottom: TabBar(
               controller: _controller,
               indicatorColor: Colors.white,
+              labelColor: Colors.white,
               tabs: _buildTabBarTitlesList()),
         ),
         body: TabBarView(
@@ -521,34 +527,27 @@ class _MangaDetailScreenState extends State<MangaDetailScreen>
                     ),
                     InkWell(
                       onTap: () async {
-                        String comment = commentController.text;
-                        if (comment.isNotEmpty && comment.length >= 5) {
-                          CommentService.postComment(
-                              currentUser?.user[0].id ?? '',
-                              widget.mangaId,
-                              comment);
-                          commentController.clear();
-                          _loadUser();
-                          Fluttertoast.showToast(
-                            msg: "Bình luận đang được tải lên...",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                          );
-                          await Future.delayed(Duration(seconds: 2));
-
-                          Fluttertoast.showToast(
-                            msg: "Đăng bình luận thành công",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                          );
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: "Nhập ít nhất 5 kí tự",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                          );
-                        }
-                      },
+    String comment = commentController.text;
+    if (comment.isNotEmpty && comment.length >= 5) {
+        await CommentService.postComment(  // ✅ await post xong
+            currentUser?.user[0].id ?? '',
+            widget.mangaId,
+            comment);
+        
+        commentController.clear();
+        
+        await _loadUser();  // ✅ await load xong mới toast
+        
+        Fluttertoast.showToast(
+            msg: "Đăng bình luận thành công",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+        );
+    } else {
+        Fluttertoast.showToast(
+            msg: "Nhập ít nhất 5 kí tự");
+    }
+},
                       child: const Icon(
                         Icons.send_rounded,
                         color: ColorConst.colorPrimary50,

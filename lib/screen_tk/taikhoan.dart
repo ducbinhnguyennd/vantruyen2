@@ -330,7 +330,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             },
             child: ListTile(
               title: Transform.translate(
-                offset: Offset(-20, 0),
+                offset: Offset(-10, 0),
                 child: Text('Thay đổi ảnh đại diện/ ảnh bìa'),
               ),
               leading: ImageIcon(AssetImage(AssetsPathConst.ico_4),
@@ -350,7 +350,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             },
             child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Text('Thay đổi thông tin'),
                 ),
                 leading: Image.asset(AssetsPathConst.ico_14, height: 22)),
@@ -366,7 +366,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             },
             child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Text('Lịch sử giao dịch'),
                 ),
                 leading: Image.asset(AssetsPathConst.ico_6, height: 22)),
@@ -383,7 +383,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
               },
               child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Text('Nạp Xu'),
                 ),
                 leading: Icon(
@@ -416,7 +416,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
               },
               child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -440,7 +440,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             InkWell(
               child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Text('Tự động nối chapter'),
                 ),
                 leading: Image.asset(
@@ -472,7 +472,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
               },
               child: ListTile(
                 title: Transform.translate(
-                  offset: Offset(-20, 0),
+                  offset: Offset(-10, 0),
                   child: Text('Xóa tài khoản'),
                 ),
                 leading: ImageIcon(
@@ -553,7 +553,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             },
             child: ListTile(
               title: Transform.translate(
-                offset: Offset(-20, 0),
+                offset: Offset(-10, 0),
                 child: Text('Đăng ký nhóm dịch'),
               ),
               leading: ImageIcon(
@@ -590,7 +590,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
             },
             child: ListTile(
               title: Transform.translate(
-                offset: Offset(-20, 0),
+                offset: Offset(-10, 0),
                 child: Text('Hướng dẫn'),
               ),
               leading: Icon(
@@ -653,7 +653,7 @@ class _TaikhoanScreenState extends State<TaikhoanScreen>
               },
               child: ListTile(
                   title: Transform.translate(
-                    offset: Offset(-20, 0),
+                    offset: Offset(-10, 0),
                     child: Text('Đăng xuất'),
                   ),
                   leading: Image.asset(AssetsPathConst.ico_13, height: 22)))

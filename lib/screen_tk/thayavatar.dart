@@ -33,6 +33,12 @@ class _SuaThongTinState extends State<SuaThongTin> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         centerTitle: true,
         title: const Text('Thay đổi ảnh đại diện'),
         leading: InkWell(

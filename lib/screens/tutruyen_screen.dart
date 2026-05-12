@@ -39,27 +39,31 @@ class _FavoriteMangaScreenState extends State<FavoriteMangaScreen>
 
   Future<void> _loadUser() async {
     UserServices us = UserServices();
-    us.getInfoLogin().then((value) {
-      if (value != "") {
-        setState(() {
-          currentUser = Data.fromJson(jsonDecode(value));
+    us
+        .getInfoLogin()
+        .then((value) {
+          if (value != "") {
+            setState(() {
+              currentUser = Data.fromJson(jsonDecode(value));
+            });
+          } else {
+            setState(() {
+              currentUser = null;
+            });
+          }
+        }, onError: (error) {})
+        .then((value) async {
+          print('userid: ${currentUser?.user[0].id}');
+          List<Manga> mangaList = await ApiListYeuThich.fetchFavoriteManga(
+            currentUser?.user[0].id ?? '',
+          );
+          List<DichTheoDoiModel> dichTheoDoiList =
+              await ApiDichTheoDoi.fetchData(currentUser?.user[0].id ?? '');
+          setState(() {
+            favoriteManga = mangaList;
+            dichTheoDoiModel = dichTheoDoiList;
+          });
         });
-      } else {
-        setState(() {
-          currentUser = null;
-        });
-      }
-    }, onError: (error) {}).then((value) async {
-      print('userid: ${currentUser?.user[0].id}');
-      List<Manga> mangaList = await ApiListYeuThich.fetchFavoriteManga(
-          currentUser?.user[0].id ?? '');
-      List<DichTheoDoiModel> dichTheoDoiList =
-          await ApiDichTheoDoi.fetchData(currentUser?.user[0].id ?? '');
-      setState(() {
-        favoriteManga = mangaList;
-        dichTheoDoiModel = dichTheoDoiList;
-      });
-    });
   }
 
   @override
@@ -72,13 +76,16 @@ class _FavoriteMangaScreenState extends State<FavoriteMangaScreen>
         centerTitle: true,
         title: Text('Tủ Truyện'),
         backgroundColor: ColorConst.colorPrimary50,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
-          tabs: [
-            Tab(text: 'Truyện đã lưu'),
-            Tab(text: 'Nhóm dịch yêu thích'),
-          ],
+          labelColor: Colors.white,
+          tabs: [Tab(text: 'Truyện đã lưu'), Tab(text: 'Nhóm dịch yêu thích')],
         ),
       ),
       body: TabBarView(
@@ -87,192 +94,207 @@ class _FavoriteMangaScreenState extends State<FavoriteMangaScreen>
           RefreshIndicator(
             color: ColorConst.colorPrimary120,
             onRefresh: _refresh,
-            child: favoriteManga.isEmpty
-                ? ListView(
-                    padding: EdgeInsets.all(50),
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text('Bạn chưa có truyện nào yêu thích'),
-                        ),
-                      ),
-                    ],
-                  )
-                : ListView.builder(
-                    itemCount: favoriteManga.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MangaDetailScreen(
-                                  mangaId: favoriteManga[index].id!,
-                                  storyName: favoriteManga[index].mangaName!,
-                                  image: favoriteManga[index].image!,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: MediaQuery.of(context).size.height / 7,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              color: ColorConst.colorPrimary120,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: CachedNetworkImage(
-                                    imageUrl: favoriteManga[index].image!,
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(
-                                              DoubleX.kRadiusSizeGeneric_1XX),
-                                        ),
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                          colorFilter: ColorFilter.mode(
-                                            Colors.red.withOpacity(0.10),
-                                            BlendMode.colorBurn,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator(
-                                        color: ColorConst.colorPrimary120,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Center(
-                                      child: Icon(Icons.error),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          favoriteManga[index].mangaName!,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          'Thể loại: ${favoriteManga[index].category}',
-                                        ),
-                                        Text(
-                                          'Chapter ${favoriteManga[index].totalChapters.toString()}',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+            child:
+                favoriteManga.isEmpty
+                    ? ListView(
+                      padding: EdgeInsets.all(50),
+                      children: [
+                        Container(
+                          child: Center(
+                            child: Text('Bạn chưa có truyện nào yêu thích'),
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ],
+                    )
+                    : ListView.builder(
+                      itemCount: favoriteManga.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => MangaDetailScreen(
+                                        mangaId: favoriteManga[index].id!,
+                                        storyName:
+                                            favoriteManga[index].mangaName!,
+                                        image: favoriteManga[index].image!,
+                                      ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: MediaQuery.of(context).size.height / 7,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                                color: ColorConst.colorPrimary120,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: CachedNetworkImage(
+                                      imageUrl: favoriteManga[index].image!,
+                                      imageBuilder:
+                                          (context, imageProvider) => Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                    Radius.circular(
+                                                      DoubleX
+                                                          .kRadiusSizeGeneric_1XX,
+                                                    ),
+                                                  ),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                                colorFilter: ColorFilter.mode(
+                                                  Colors.red.withOpacity(0.10),
+                                                  BlendMode.colorBurn,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      placeholder:
+                                          (context, url) => Center(
+                                            child: CircularProgressIndicator(
+                                              color: ColorConst.colorPrimary120,
+                                            ),
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) => const Center(
+                                            child: Icon(Icons.error),
+                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            favoriteManga[index].mangaName!,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            'Thể loại: ${favoriteManga[index].category}',
+                                          ),
+                                          Text(
+                                            'Chapter ${favoriteManga[index].totalChapters.toString()}',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
           ),
           RefreshIndicator(
             color: ColorConst.colorPrimary120,
             onRefresh: _refresh,
-            child: dichTheoDoiModel.isEmpty
-                ? ListView(
-                    padding: EdgeInsets.all(50),
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text('Bạn chưa yêu thích nhóm dịch nào'),
+            child:
+                dichTheoDoiModel.isEmpty
+                    ? ListView(
+                      padding: EdgeInsets.all(50),
+                      children: [
+                        Container(
+                          child: Center(
+                            child: Text('Bạn chưa yêu thích nhóm dịch nào'),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                : GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      ],
+                    )
+                    : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 0.0,
                         mainAxisSpacing: 0.0,
-                        childAspectRatio: 3 / 5),
-                    itemCount: dichTheoDoiModel.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NhomDichScreen(
-                                  nhomdichID: dichTheoDoiModel[index].id,
-                                  userID: currentUser?.user[0].id ?? '',
-                                ),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 80,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: ColorConst.colorPrimary,
-                                ),
-                                child: dichTheoDoiModel[index].avatar == ''
-                                    ? Center(
-                                        child: Text(
-                                          dichTheoDoiModel[index]
-                                              .username
-                                              .substring(0, 1),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )
-                                    : ClipOval(
-                                        child: Image.memory(
-                                          base64Decode(
-                                              dichTheoDoiModel[index].avatar),
-                                          fit: BoxFit.cover,
-                                        ),
+                        childAspectRatio: 3 / 5,
+                      ),
+                      itemCount: dichTheoDoiModel.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => NhomDichScreen(
+                                        nhomdichID: dichTheoDoiModel[index].id,
+                                        userID: currentUser?.user[0].id ?? '',
                                       ),
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    dichTheoDoiModel[index].username,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: ColorConst.colorPrimary,
                                   ),
-                                  SizedBox(width: 5),
-                                  Image.asset(AssetsPathConst.tichxanh,
-                                      height: 20)
-                                ],
-                              ),
-                            ],
+                                  child:
+                                      dichTheoDoiModel[index].avatar == ''
+                                          ? Center(
+                                            child: Text(
+                                              dichTheoDoiModel[index].username
+                                                  .substring(0, 1),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )
+                                          : ClipOval(
+                                            child: Image.memory(
+                                              base64Decode(
+                                                dichTheoDoiModel[index].avatar,
+                                              ),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      dichTheoDoiModel[index].username,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Image.asset(
+                                      AssetsPathConst.tichxanh,
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),

@@ -93,6 +93,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       appBar: AppBar(
         title: Text('Thay đổi thông tin'),
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(13.0, 90.0, 13.0, 8.0),

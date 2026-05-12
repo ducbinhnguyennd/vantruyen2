@@ -35,6 +35,8 @@ class _BangTinScreenState extends State<BangTinScreen>
   bool isLoading = false;
   List<Bangtin> posts = [];
 
+  Future<List<Bangtin>>? _postsFuture;
+
   Future<void> _refresh() async {
     await _loadUser();
   }
@@ -58,36 +60,45 @@ class _BangTinScreenState extends State<BangTinScreen>
     }
   }
 
+  // ✅ Sửa _loadUser thành async/await thực sự
   Future<void> _loadUser() async {
     UserServices us = UserServices();
-    us.getInfoLogin().then((value) {
-      if (value != "") {
-        setState(() {
-          currentUser = Data.fromJson(jsonDecode(value));
-          nutlike = bangtin?.isLiked ?? false;
-        });
-      } else {
-        setState(() {
-          currentUser = null;
-        });
-      }
-    }, onError: (error) {}).then((value) async {
-      print('userid: ${currentUser?.user[0].id}');
+    final value = await us.getInfoLogin();
+
+    if (value != "") {
+      setState(() {
+        currentUser = Data.fromJson(jsonDecode(value));
+        nutlike = bangtin?.isLiked ?? false;
+      });
+    } else {
+      setState(() {
+        currentUser = null;
+      });
+    }
+
+    // ✅ Gán lại Future sau khi đã có currentUser → FutureBuilder sẽ rebuild
+    setState(() {
+      _postsFuture = _fetchPosts();
     });
+
+    print('userid: ${currentUser?.user[0].id}');
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: ColorConst.colorPrimary50,
-        elevation: 0,
-        title: Text(
-          'Bảng tin',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
         ),
+        elevation: 0,
+        title: Text('Bảng tin', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: RefreshIndicator(
         color: ColorConst.colorPrimary120,
@@ -100,24 +111,24 @@ class _BangTinScreenState extends State<BangTinScreen>
               child: Row(
                 children: [
                   Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Xin chào',
-                            style: TextStyle(fontSize: 12),
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Xin chào', style: TextStyle(fontSize: 12)),
+                        Text(
+                          currentUser?.user[0].username ?? 'bạn',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
                           ),
-                          Text(
-                            currentUser?.user[0].username ?? 'bạn',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 19),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      )),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
                   Expanded(
                     flex: 8,
                     child: Padding(
@@ -129,13 +140,16 @@ class _BangTinScreenState extends State<BangTinScreen>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PostBaiVietScreen(
-                                      userId: currentUser?.user[0].id ?? '')),
+                                builder:
+                                    (context) => PostBaiVietScreen(
+                                      userId: currentUser?.user[0].id ?? '',
+                                    ),
+                              ),
                             ).then((result) {
-                              if (result.dataToPass == true) {
-                                setState(() {
-                                  _loadUser();
-                                });
+                              if (result != null &&
+                                  result is InventoryData &&
+                                  result.boolValue == true) {
+                                _loadUser();
                               }
                             });
                           } else {
@@ -144,47 +158,55 @@ class _BangTinScreenState extends State<BangTinScreen>
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              border:
-                                  Border.all(color: Colors.black, width: 1)),
-                          child:
-                              const Center(child: Text('Bạn đang nghĩ gì ?')),
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(color: Colors.black, width: 1),
+                          ),
+                          child: const Center(
+                            child: Text('Bạn đang nghĩ gì ?'),
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: (() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NotificationScreen(
-                                      userID: currentUser?.user[0].id ?? '',
-                                    )),
-                          );
-                        }),
-                        child: Image.asset(
-                          AssetsPathConst.categoryBell,
-                          height: 25,
-                          color: ColorConst.colorPrimary120,
-                        ),
-                      ))
+                    flex: 2,
+                    child: InkWell(
+                      onTap: (() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => NotificationScreen(
+                                  userID: currentUser?.user[0].id ?? '',
+                                ),
+                          ),
+                        );
+                      }),
+                      child: Image.asset(
+                        AssetsPathConst.categoryBell,
+                        height: 25,
+                        color: ColorConst.colorPrimary120,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
             Expanded(
+              // ✅ Dùng _postsFuture thay vì gọi _fetchPosts() trực tiếp
               child: FutureBuilder<List<Bangtin>>(
-                future: _fetchPosts(),
+                future: _postsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                        child: CircularProgressIndicator(
-                      color: ColorConst.colorPrimary120,
-                    ));
+                      child: CircularProgressIndicator(
+                        color: ColorConst.colorPrimary120,
+                      ),
+                    );
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('Chưa có bài viết nào'));
                   } else {
                     posts = snapshot.data!;
                     return ListView.builder(
@@ -234,10 +256,7 @@ class _BangTinScreenState extends State<BangTinScreen>
           _showDeleteDialog(posts[index].id, currentUser?.user[0].id ?? '');
         }
       },
-      child: Icon(
-        Icons.more_vert,
-        size: 22,
-      ),
+      child: Icon(Icons.more_vert, size: 22),
     );
   }
 
@@ -259,9 +278,8 @@ class _BangTinScreenState extends State<BangTinScreen>
               onPressed: () async {
                 await XoaBaiDang.xoaBaiDang(idPost, userId);
                 Navigator.of(context).pop();
-                setState(() {
-                  _loadUser();
-                });
+                // ✅ await để đảm bảo load xong mới rebuild
+                await _loadUser();
               },
               child: Text('Xóa'),
             ),
@@ -277,13 +295,13 @@ class _BangTinScreenState extends State<BangTinScreen>
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CommentScreen(
-              baivietID: baivietID,
-              userID: userID,
-            ),
+            builder:
+                (context) =>
+                    CommentScreen(baivietID: baivietID, userID: userID),
           ),
         ).then((value) {
           if (value == true) {
+            // ✅ await _loadUser để refresh đúng
             _loadUser();
           }
         });
@@ -291,7 +309,7 @@ class _BangTinScreenState extends State<BangTinScreen>
       child: Row(
         children: [
           Icon(Icons.chat, size: 25, color: Colors.grey[350]),
-          Text(' Bình luận')
+          Text(' Bình luận'),
         ],
       ),
     );

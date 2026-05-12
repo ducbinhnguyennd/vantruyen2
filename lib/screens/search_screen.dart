@@ -77,6 +77,12 @@ class _SearchScreenState extends State<SearchScreen> {
         title: Text('Tìm kiếm kho truyện'),
         centerTitle: true,
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       body: Column(children: [
         Padding(

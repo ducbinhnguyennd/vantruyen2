@@ -42,6 +42,12 @@ class _LichSuGiaoDichState extends State<LichSuGiaoDich>
       appBar: AppBar(
         title: const Text('Lịch sử giao dịch'),
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,

@@ -59,6 +59,12 @@ class _BXHScreenState extends State<BXHScreen>
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text('Bảng Xếp Hạng'),
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         backgroundColor: ColorConst.colorPrimary50,
         actions: [
           IconButton(
