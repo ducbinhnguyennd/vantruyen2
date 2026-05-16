@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Text('Chào mừng bạn đến với',
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
-              Text('MangaLand',
+              Text('Vạn Truyện',
                   style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 80, 20, 10),

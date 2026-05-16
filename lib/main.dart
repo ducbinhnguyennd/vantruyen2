@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     int backButtonCount = 0;
 
     return MaterialApp(
-      title: 'MangaLand',
+      title: 'Vạn Truyện',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

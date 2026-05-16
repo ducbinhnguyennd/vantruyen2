@@ -1,5 +1,5 @@
 class AssetsPathConst {
-  static const String splashBackgroundNgonTinh = 'assets/images/icons.png';
+  static const String splashBackgroundNgonTinh = 'assets/images/logonew.png';
   static const String backgroundStoryDetail = 'assets/images/ico_free.png';
 
   static const String gifloading = 'assets/images/gifloading.gif';
@@ -20,7 +20,7 @@ class AssetsPathConst {
   static const String nen = 'assets/images/nen.png';
 
 //icons
-  static const String logo = 'assets/images/icons.png';
+  static const String logo = 'assets/images/logonew.png';
   static const String tichxanh = 'assets/images/tichxanh.png';
 
 //follow

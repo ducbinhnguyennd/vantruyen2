@@ -74,23 +74,14 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
-        color: ColorConst.colorPrimary,
+        color: ColorConst.colorWhite,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(
               AssetsPathConst.splashBackgroundNgonTinh,
-              height: 200,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'MangaLand',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-                color: Colors.white,
-              ),
+              height: 300,
             ),
           ],
         ),

@@ -39,6 +39,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         title: Text('Thông báo'),
       ),
       body: notifications.isEmpty

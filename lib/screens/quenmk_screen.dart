@@ -61,7 +61,7 @@ class _QuenMatKhauScreenState extends State<QuenMatKhauScreen> {
                   Text('Chào mừng bạn đến với',
                       style:
                           TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
-                  Text('MangaLand',
+                  Text('Vạn Truyện',
                       style:
                           TextStyle(fontSize: 23, fontWeight: FontWeight.w500)),
                   Padding(

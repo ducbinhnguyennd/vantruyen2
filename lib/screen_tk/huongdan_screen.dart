@@ -16,6 +16,12 @@ class _HuongDanScreenState extends State<HuongDanScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         centerTitle: true,
         title: Text('Hướng dẫn'),
       ),
