@@ -38,6 +38,12 @@ class _PostBaiVietScreenState extends State<PostBaiVietScreen> {
       appBar: AppBar(
         title: Text('Viết bài mới'),
         backgroundColor: ColorConst.colorPrimary50,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 21,
+          fontWeight: FontWeight.bold,
+        ),
         leading: InkWell(
           onTap: (() {
             Navigator.of(context).pop(dataToPass);

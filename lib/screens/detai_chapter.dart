@@ -56,6 +56,7 @@ class _DetailChapterState extends State<DetailChapter> {
   bool _isSpeaking = false;
   FlutterTts _flutterTts = FlutterTts();
   Data? currentUser;
+  bool _isLocked = false;
   _loadUser() {
     UserServices us = UserServices();
     us.getInfoLogin().then(
@@ -733,13 +734,12 @@ class _DetailChapterState extends State<DetailChapter> {
   }
 
   Widget _buildBodyChapter(String sChapContent) {
-    print('${widget.viporfree}');
-
-    // chap is vip
     if (widget.viporfree == 'vip') {
+      _isLocked = true; // ✅ đánh dấu đang khóa
       _isShowBar = true;
       return Stack(children: [_buildVipChapterBodyPartLock()]);
     } else {
+      _isLocked = false;
       return _buildChapterBodyPartNormal(sChapContent);
     }
   }
@@ -769,7 +769,12 @@ class _DetailChapterState extends State<DetailChapter> {
 
     return Container(
       height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.only(
+      top: 150,
+      bottom: 100,
+      left: 16,
+      right: 16,
+    ),
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
@@ -843,20 +848,24 @@ class _DetailChapterState extends State<DetailChapter> {
                 }
               },
               color: ColorConst.colorBackgroundStory,
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(
-                  top: 96,
-                  bottom: 100,
-                  left: 16,
-                  right: 16,
-                ),
-                child: Text(
-                  chapterDetail?.content ?? '',
-                  style: TextStyle(fontSize: _fontSize, height: 1.8),
-                  textAlign: TextAlign.justify,
-                ),
-              ),
+              child:
+                  chapterDetail == null
+                      ? Center(child: CircularProgressIndicator())
+                      : _buildBodyChapter(chapterDetail?.content ?? ''),
+              // child: SingleChildScrollView(
+              //   controller: _scrollController,
+              //   padding: const EdgeInsets.only(
+              //     top: 96,
+              //     bottom: 100,
+              //     left: 16,
+              //     right: 16,
+              //   ),
+              //   child: Text(
+              //     chapterDetail?.content ?? '',
+              //     style: TextStyle(fontSize: _fontSize, height: 1.8),
+              //     textAlign: TextAlign.justify,
+              //   ),
+              // ),
             ),
 
             Positioned(
@@ -876,7 +885,7 @@ class _DetailChapterState extends State<DetailChapter> {
               bottom: 20,
               left: 20,
               right: 20,
-              child: _buildFloatingBottomBar(),
+              child: _isLocked ? Container() : _buildFloatingBottomBar(),
             ),
             Globals.isRight == false
                 ? Positioned(
@@ -884,7 +893,7 @@ class _DetailChapterState extends State<DetailChapter> {
                   bottom: 275,
                   top: 270,
                   child: AnimatedContainer(
-                    width: _isShowBar ? 56.0 : 0.0,
+                    width: (_isShowBar && !_isLocked) ? 56.0 : 0.0,
                     duration: const Duration(milliseconds: 200),
                     child: _buildBottomBar(chapterDetail),
                   ),
@@ -895,7 +904,7 @@ class _DetailChapterState extends State<DetailChapter> {
                   bottom: 275,
                   top: 270,
                   child: AnimatedContainer(
-                    width: _isShowBar ? 56.0 : 0.0,
+                    width: (_isShowBar && !_isLocked) ? 56.0 : 0.0,
                     duration: const Duration(milliseconds: 200),
                     child: _buildBottomBar(chapterDetail),
                   ),
